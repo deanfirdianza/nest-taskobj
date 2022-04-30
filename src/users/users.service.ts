@@ -7,7 +7,7 @@ import { UserEntity } from './entities/user.entity';
 import { HashService } from '../common/helper/hash/hash.service';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(private prisma: PrismaService, private hash: HashService) {}
   async create(createUserDto: CreateUserDto) {
     try {
