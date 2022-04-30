@@ -11,10 +11,11 @@ datasource db {
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String?
-  tasks Task[]
+  id       Int     @default(autoincrement()) @id
+  email    String  @unique
+  name     String?
+  password String
+  tasks    Task[]
 }
 
 model Task {
@@ -35,6 +36,6 @@ model Objective {
   isFinished    Boolean? @default(false)
   createdTime   DateTime
   updatedTime   DateTime
-  taskTitle     Task     @relation(fields: [taskId], references: [id])
+  task          Task     @relation(fields: [taskId], references: [id])
   taskId        Int
 }
