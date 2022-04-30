@@ -12,10 +12,11 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { UserEntity } from './entities/user.entity';
+import { serialize } from 'class-transformer';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -24,9 +25,15 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll(): Promise<any> {
+    const users = await this.userService.findAll();
+    const response = [];
+    users.forEach((element) => {
+      response.push(new UserEntity(element));
+    });
+    return response;
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

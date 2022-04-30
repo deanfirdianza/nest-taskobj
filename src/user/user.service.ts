@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, Prisma } from '@prisma/client';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -11,12 +12,12 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  async findAll() {
-    return `This action returns all user`;
+  async findAll(): Promise<User[]> {
+    return await this.prisma.user.findMany();
   }
 
   async findOne(id: number): Promise<User | null> {
-    return this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: {
         id,
       },
