@@ -6,10 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Prisma } from '@prisma/client';
+import { UserEntity } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {
@@ -25,9 +29,12 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('/:id')
+  async findOne(
+    @Param('id') id: Prisma.UserWhereUniqueInput,
+  ): Promise<UserEntity> {
+    return new UserEntity(await this.userService.findOne(+id));
   }
 
   @Patch(':id')
