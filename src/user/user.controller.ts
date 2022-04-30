@@ -15,8 +15,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Prisma, User } from '@prisma/client';
 import { UserEntity } from './entities/user.entity';
 import { serialize } from 'class-transformer';
-import { FindOneUserParams } from './dto/find-one-user-params.user.dto';
+import { FindOneUserParams } from './dto/find-one-user-params.dto';
 import { UpdateUserParams } from './dto/update-user-params.dto';
+import { DeleteUserParams } from './dto/delete-user-params.dto';
 
 @Controller('users')
 export class UserController {
@@ -53,7 +54,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  remove(@Param() params: DeleteUserParams) {
+    return this.userService.remove(+params.id);
   }
 }

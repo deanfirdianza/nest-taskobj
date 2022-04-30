@@ -88,7 +88,23 @@ export class UserService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    try {
+      const user = await this.prisma.user.delete({
+        where: {
+          id: id,
+        },
+      });
+
+      console.log(user);
+      return JSON.parse(`{"message": "Success Delete User"}`);
+    } catch (e) {
+      console.log(e);
+      if (e.code === 'P2025') {
+        throw new HttpException(`${e.meta.cause}`, HttpStatus.CONFLICT);
+      } else {
+        throw new HttpException('Failed to delete user', HttpStatus.CONFLICT);
+      }
+    }
   }
 }
