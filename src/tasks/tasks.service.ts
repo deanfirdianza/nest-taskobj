@@ -20,7 +20,7 @@ export class TasksService {
       return await this.prisma.task.findMany({
         include: {
           owner: true,
-          // objectives: true,
+          objectives: true,
         },
       });
     } catch (e) {

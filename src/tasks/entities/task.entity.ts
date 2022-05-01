@@ -1,5 +1,6 @@
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { toUnix } from '../../common/helper/date/date.service';
+import { ObjectiveEntity } from '../../objectives/entities/objective.entity';
 import { UserEntity } from '../../users/entities/user.entity';
 
 export class TaskEntity {
@@ -25,8 +26,13 @@ export class TaskEntity {
   @Exclude()
   ownerId: number;
 
+  @Exclude()
   @Type(() => UserEntity)
   owner: UserEntity;
+
+  @Expose({ name: 'Objective_List' })
+  @Type(() => ObjectiveEntity)
+  objectives: ObjectiveEntity;
 
   constructor(entity: any) {
     Object.assign(this, entity);
