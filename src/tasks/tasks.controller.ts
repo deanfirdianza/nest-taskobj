@@ -8,15 +8,21 @@ import {
   Delete,
   ClassSerializerInterceptor,
   UseInterceptors,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskEntity } from './entities/task.entity';
+import { ErrorHandlerService } from '../common/helper/error-handler/error-handler.service';
 
 @Controller('task')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(
+    private readonly tasksService: TasksService,
+    private errorHandler: ErrorHandlerService,
+  ) {}
 
   @Post()
   create(@Body() createTaskDto: CreateTaskDto) {
@@ -34,9 +40,29 @@ export class TasksController {
     return response;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tasksService.findOne(+id);
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('/get/:id')
+  async findOne(@Param('id') id: number): Promise<TaskEntity> {
+    if (typeof id !== 'number' && id % 1 !== 0) {
+      throw new HttpException(
+        this.errorHandler.response(
+          this.errorHandler.errorMessage.param,
+          this.errorHandler.errorKey.param,
+        ),
+        HttpStatus.OK,
+      );
+    }
+    try {
+      return new TaskEntity(await this.tasksService.findOne(+id));
+    } catch (e) {
+      throw new HttpException(
+        this.errorHandler.response(
+          this.errorHandler.errorMessage.idNotFound,
+          this.errorHandler.errorKey.idNotFound,
+        ),
+        HttpStatus.OK,
+      );
+    }
   }
 
   @Patch(':id')

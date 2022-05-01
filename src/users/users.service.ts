@@ -53,6 +53,7 @@ export class UsersService {
         where: {
           id,
         },
+        rejectOnNotFound: true,
       });
     } catch (e) {
       console.log(e);

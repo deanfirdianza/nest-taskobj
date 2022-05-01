@@ -1,4 +1,4 @@
-import { Expose, Transform, Type } from 'class-transformer';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { toUnix } from '../../common/helper/date/date.service';
 import { UserEntity } from '../../users/entities/user.entity';
 
@@ -21,6 +21,9 @@ export class TaskEntity {
   updatedTime: number;
   @Expose({ name: 'Is_Finished' })
   isFinished: boolean;
+
+  @Exclude()
+  ownerId: number;
 
   @Type(() => UserEntity)
   owner: UserEntity;
