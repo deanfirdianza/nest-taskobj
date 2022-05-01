@@ -14,15 +14,8 @@ export class TasksService {
     try {
       return await this.prisma.task.findMany({
         include: {
-          owner: {
-            select: {
-              id: true,
-              email: true,
-              name: true,
-              password: false,
-            },
-          },
-          objectives: true,
+          owner: true,
+          // objectives: true,
         },
       });
     } catch (e) {
