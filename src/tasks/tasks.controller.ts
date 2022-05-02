@@ -10,18 +10,28 @@ import {
   UseInterceptors,
   HttpException,
   HttpStatus,
+  Query,
+  UseFilters,
+  UsePipes,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskEntity } from './entities/task.entity';
 import { ErrorHandlerService } from '../common/helper/error-handler/error-handler.service';
+import { ResponseHandlerService } from '../common/helper/response-handler/response-handler.service';
+import { instanceToPlain } from 'class-transformer';
+import { FindAllTaskQuery } from './dto/find-all-task-query.dto';
+import { HttpExceptionFilter } from '../http-exception.filter';
+import { UnixValidationPipe } from '../unix-validation.pipe';
+import { FindOneTaskParams } from './dto/find-one-task-param.dto';
 
 @Controller('task')
 export class TasksController {
   constructor(
     private readonly tasksService: TasksService,
     private errorHandler: ErrorHandlerService,
+    private responseHandler: ResponseHandlerService,
   ) {}
 
   @Post()
@@ -30,17 +40,33 @@ export class TasksController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @UseFilters(HttpExceptionFilter)
+  @UsePipes(UnixValidationPipe)
   @Get('/get')
-  async findAll(): Promise<any> {
-    const users = await this.tasksService.findAll();
-    const response = [];
-    users.forEach((element) => {
-      response.push(new TaskEntity(element));
-    });
-    return response;
+  async findAll(@Query() query: FindAllTaskQuery): Promise<any> {
+    try {
+      const tasks = await this.tasksService.findAll(query);
+      const data = await this.tasksService.findAllPaginate(query);
+      const count = Object.keys(tasks).length;
+      const response = [];
+      data.forEach((element) => {
+        response.push(new TaskEntity(element));
+      });
+
+      return this.responseHandler.success(
+        JSON.stringify(instanceToPlain(response)),
+        query.Page,
+        query.Limit < count ? query.Limit : count,
+        Math.ceil(count / query.Limit),
+        count,
+      );
+    } catch (e) {
+      throw new HttpException(this.errorHandler.response(), HttpStatus.OK);
+    }
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  // @UseFilters(HttpExceptionFilter)
   @Get('/get/:id')
   async findOne(@Param('id') id: number): Promise<TaskEntity> {
     if (typeof id !== 'number' && id % 1 !== 0) {
@@ -56,10 +82,10 @@ export class TasksController {
       return new TaskEntity(await this.tasksService.findOne(+id));
     } catch (e) {
       throw new HttpException(
-        this.errorHandler.response(
-          this.errorHandler.errorMessage.idNotFound,
-          this.errorHandler.errorKey.idNotFound,
-        ),
+        {
+          error: this.errorHandler.errorMessage.idNotFound,
+          message: e,
+        },
         HttpStatus.OK,
       );
     }

@@ -32,13 +32,11 @@ async function main() {
             create: [
               {
                 objectiveName: 'Open Next.js documentation',
-                isFinished: null,
                 createdTime: new Date(date.setHours(date.getHours() + 4)),
                 updatedTime: new Date(date.setHours(date.getHours() + 4)),
               },
               {
                 objectiveName: 'Open Prisma section',
-                isFinished: null,
                 createdTime: new Date(date.setHours(date.getHours() + 5)),
                 updatedTime: new Date(date.setHours(date.getHours() + 5)),
               },
@@ -67,19 +65,16 @@ async function main() {
               create: [
                 {
                   objectiveName: 'Open Twitter',
-                  isFinished: null,
                   createdTime: new Date(date.setHours(date.getHours() + 4)),
                   updatedTime: new Date(date.setHours(date.getHours() + 4)),
                 },
                 {
                   objectiveName: 'Open Prisma Account',
-                  isFinished: null,
                   createdTime: new Date(date.setHours(date.getHours() + 5)),
                   updatedTime: new Date(date.setHours(date.getHours() + 5)),
                 },
                 {
                   objectiveName: 'Follow Prisma Account',
-                  isFinished: null,
                   createdTime: new Date(date.setHours(date.getHours() + 6)),
                   updatedTime: new Date(date.setHours(date.getHours() + 6)),
                 },
@@ -95,19 +90,16 @@ async function main() {
               create: [
                 {
                   objectiveName: 'Open Google',
-                  isFinished: null,
                   createdTime: new Date(date.setHours(date.getHours() + 4)),
                   updatedTime: new Date(date.setHours(date.getHours() + 4)),
                 },
                 {
                   objectiveName: 'Search Pharindo',
-                  isFinished: null,
                   createdTime: new Date(date.setHours(date.getHours() + 5)),
                   updatedTime: new Date(date.setHours(date.getHours() + 5)),
                 },
                 {
                   objectiveName: 'Find info in Pharos Website',
-                  isFinished: null,
                   createdTime: new Date(date.setHours(date.getHours() + 6)),
                   updatedTime: new Date(date.setHours(date.getHours() + 6)),
                 },

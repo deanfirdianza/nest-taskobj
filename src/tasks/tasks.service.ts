@@ -3,7 +3,9 @@ import { Task } from '@prisma/client';
 import { ErrorHandlerService } from '../common/helper/error-handler/error-handler.service';
 import { PrismaService } from '../prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { FindAllTaskQuery } from './dto/find-all-task-query.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import * as rundef from 'rundef';
 
 @Injectable()
 export class TasksService {
@@ -15,17 +17,67 @@ export class TasksService {
     return 'This action adds a new task';
   }
 
-  async findAll() {
+  async findAll(query: FindAllTaskQuery) {
     try {
-      return await this.prisma.task.findMany({
+      const prismaObj: any = {
         include: {
-          owner: true,
           objectives: true,
         },
-      });
+        where: {
+          title: {
+            contains: query.Title,
+          },
+          actionTime: {
+            gt: query.Action_Time_Start
+              ? new Date(query.Action_Time_Start * 1000)
+              : query.Action_Time_Start,
+            lt: query.Action_Time_End
+              ? new Date(query.Action_Time_End * 1000)
+              : query.Action_Time_End,
+          },
+          isFinished: query.Is_Finished,
+        },
+        orderBy: {
+          id: 'desc',
+        },
+      };
+      const stripedObj = rundef(prismaObj, true, true);
+      return await this.prisma.task.findMany(stripedObj);
     } catch (e) {
-      console.log(e);
-      throw new HttpException('Failed to get tasks', HttpStatus.CONFLICT);
+      return Promise.reject(e);
+    }
+  }
+
+  async findAllPaginate(query: FindAllTaskQuery) {
+    try {
+      const prismaObj: any = {
+        skip: (query.Page - 1) * query.Limit,
+        take: query.Limit,
+        include: {
+          objectives: true,
+        },
+        where: {
+          title: {
+            contains: query.Title,
+          },
+          actionTime: {
+            gt: query.Action_Time_Start
+              ? new Date(query.Action_Time_Start * 1000)
+              : query.Action_Time_Start,
+            lt: query.Action_Time_End
+              ? new Date(query.Action_Time_End * 1000)
+              : query.Action_Time_End,
+          },
+          isFinished: query.Is_Finished,
+        },
+        orderBy: {
+          id: 'desc',
+        },
+      };
+      const stripedObj = rundef(prismaObj, true, true);
+      return await this.prisma.task.findMany(stripedObj);
+    } catch (e) {
+      return Promise.reject(e);
     }
   }
 
@@ -34,6 +86,9 @@ export class TasksService {
       return await this.prisma.task.findUnique({
         where: {
           id,
+        },
+        include: {
+          objectives: true,
         },
         rejectOnNotFound: true,
       });
