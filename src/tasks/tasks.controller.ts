@@ -13,8 +13,8 @@ import {
   Query,
   UseFilters,
   UsePipes,
-  ValidationPipe,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -27,6 +27,8 @@ import { FindAllTaskQuery } from './dto/find-all-task-query.dto';
 import { HttpExceptionFilter } from '../http-exception.filter';
 import { UnixValidationPipe } from '../unix-validation.pipe';
 import { FindOneTaskParams } from './dto/find-one-task-param.dto';
+import { UpdateTaskParams } from './dto/update-task-param.dto';
+import { ParamValidationPipe } from '../param-validation.pipe';
 
 @Controller('task')
 export class TasksController {
@@ -86,6 +88,7 @@ export class TasksController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UseFilters(HttpExceptionFilter)
   @UsePipes(ParseIntPipe)
+  @UsePipes(ParamValidationPipe)
   @Get('/get/:id')
   async findOne(@Param('id') id: FindOneTaskParams): Promise<TaskEntity> {
     try {
@@ -101,9 +104,24 @@ export class TasksController {
     }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseFilters(HttpExceptionFilter)
+  @Put('/update/:id')
+  update(
+    @Param('id', ParseIntPipe) id: UpdateTaskParams,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ) {
     return this.tasksService.update(+id, updateTaskDto);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseFilters(HttpExceptionFilter)
+  @Put('/update2/:id')
+  update2(
+    @Param('id', ParseIntPipe) id: UpdateTaskParams,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ) {
+    return this.tasksService.update2(+id, updateTaskDto);
   }
 
   @Delete(':id')

@@ -38,4 +38,6 @@ model Objective {
   updatedTime   DateTime
   task          Task     @relation(fields: [taskId], references: [id])
   taskId        Int
+
+  @@unique([objectiveName, taskId])
 }
