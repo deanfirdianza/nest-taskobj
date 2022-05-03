@@ -31,7 +31,7 @@ export class TasksService {
         .then((v) => {
           Promise.all(
             createTaskDto.Objective_List.map(async function (element, i) {
-              return this.prisma.objective.create({
+              return await this.prisma.objective.create({
                 data: {
                   taskId: v.id,
                   objectiveName: element,
@@ -282,7 +282,29 @@ export class TasksService {
     }
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    try {
+      const deleteObjective = this.prisma.objective.deleteMany({
+        where: {
+          taskId: id,
+        },
+      });
+
+      const deleteTask = this.prisma.task.delete({
+        where: {
+          id: id,
+        },
+      });
+
+      return await this.prisma
+        .$transaction([deleteObjective, deleteTask])
+        .then((transaction) => {
+          console.log(transaction);
+          return {
+            message: 'Success',
+          };
+        });
+    } catch (error) {}
     return `This action removes a #${id} task`;
   }
 }

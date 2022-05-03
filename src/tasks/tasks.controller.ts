@@ -29,6 +29,7 @@ import { UnixValidationPipe } from '../unix-validation.pipe';
 import { FindOneTaskParams } from './dto/find-one-task-param.dto';
 import { UpdateTaskParams } from './dto/update-task-param.dto';
 import { ParamValidationPipe } from '../param-validation.pipe';
+import { DeleteTaskParams } from './dto/delete-task-param.dto';
 
 @Controller('task')
 export class TasksController {
@@ -124,8 +125,8 @@ export class TasksController {
     return this.tasksService.update2(+id, updateTaskDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tasksService.remove(+id);
+  @Delete('/delete/:id')
+  remove(@Param() params: DeleteTaskParams) {
+    return this.tasksService.remove(+params.id);
   }
 }
