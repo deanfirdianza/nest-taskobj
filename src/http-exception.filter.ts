@@ -33,7 +33,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
         message: 'Failed',
         error_key: this.errorKey.idNotFound,
         error_message: exception.getResponse()['error'],
-        error_data: exception.getResponse()['message'],
+        error_data:
+          exception.getResponse()['message']['name'] ??
+          exception.getResponse()['message'],
       });
     } else {
       response.json({

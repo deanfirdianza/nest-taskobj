@@ -13,6 +13,8 @@ import {
   Query,
   UseFilters,
   UsePipes,
+  ValidationPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -66,18 +68,10 @@ export class TasksController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  // @UseFilters(HttpExceptionFilter)
+  @UseFilters(HttpExceptionFilter)
+  @UsePipes(ParseIntPipe)
   @Get('/get/:id')
-  async findOne(@Param('id') id: number): Promise<TaskEntity> {
-    if (typeof id !== 'number' && id % 1 !== 0) {
-      throw new HttpException(
-        this.errorHandler.response(
-          this.errorHandler.errorMessage.param,
-          this.errorHandler.errorKey.param,
-        ),
-        HttpStatus.OK,
-      );
-    }
+  async findOne(@Param('id') id: FindOneTaskParams): Promise<TaskEntity> {
     try {
       return new TaskEntity(await this.tasksService.findOne(+id));
     } catch (e) {
