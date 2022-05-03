@@ -12,10 +12,16 @@ import { ErrorHandlerService } from './common/helper/error-handler/error-handler
 export class UnixValidationPipe implements PipeTransform {
   constructor(private errorHandler: ErrorHandlerService) {}
   transform(value: any, metadata: ArgumentMetadata) {
-    const unixParam = (({ Action_Time_Start, Action_Time_End }) => ({
+    const unixParam = (({
+      Action_Time_Start,
+      Action_Time_End,
+      Action_Time,
+    }) => ({
       Action_Time_Start: Action_Time_Start,
       Action_Time_End: Action_Time_End,
+      Action_Time: Action_Time,
     }))(value);
+
     Object.keys(unixParam).forEach(
       (key) => unixParam[key] === undefined && delete unixParam[key],
     );

@@ -13,8 +13,34 @@ export class TasksService {
     private prisma: PrismaService,
     private errorHandler: ErrorHandlerService,
   ) {}
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
+  async create(createTaskDto: CreateTaskDto) {
+    try {
+      const tasks = await this.prisma.task.create({
+        data: {
+          title: createTaskDto.Title,
+          actionTime: new Date(createTaskDto.Action_Time),
+          createdTime: new Date(),
+          updatedTime: new Date(),
+          ownerId: 2,
+        },
+      });
+      createTaskDto.Objective_List.forEach(async function (element, i) {
+        await this.prisma.objective.create({
+          data: {
+            taskId: tasks.id,
+            objectiveName: element,
+            createdTime: new Date(),
+            updatedTime: new Date(),
+          },
+        });
+      }, this);
+
+      return {
+        message: 'Success',
+      };
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async findAll(query: FindAllTaskQuery) {

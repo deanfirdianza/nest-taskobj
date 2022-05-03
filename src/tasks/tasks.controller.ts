@@ -36,9 +36,22 @@ export class TasksController {
     private responseHandler: ResponseHandlerService,
   ) {}
 
-  @Post()
+  @UseFilters(HttpExceptionFilter)
+  @UsePipes(UnixValidationPipe)
+  @Post('/add')
   create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
+    try {
+      return this.tasksService.create(createTaskDto);
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        {
+          error: this.errorHandler.errorMessage.idNotFound,
+          message: e,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -63,7 +76,10 @@ export class TasksController {
         count,
       );
     } catch (e) {
-      throw new HttpException(this.errorHandler.response(), HttpStatus.OK);
+      throw new HttpException(
+        this.errorHandler.response(),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -80,7 +96,7 @@ export class TasksController {
           error: this.errorHandler.errorMessage.idNotFound,
           message: e,
         },
-        HttpStatus.OK,
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
