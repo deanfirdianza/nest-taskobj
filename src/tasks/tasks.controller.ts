@@ -91,9 +91,15 @@ export class TasksController {
   @UsePipes(ParseIntPipe)
   @UsePipes(ParamValidationPipe)
   @Get('/get/:id')
-  async findOne(@Param('id') id: FindOneTaskParams): Promise<TaskEntity> {
+  async findOne(@Param('id') id: FindOneTaskParams): Promise<any> {
     try {
-      return new TaskEntity(await this.tasksService.findOne(+id));
+      const response = new TaskEntity(await this.tasksService.findOne(+id));
+      // return response;
+      console.log(response);
+
+      return this.responseHandler.successSingle(
+        JSON.stringify(instanceToPlain(response)),
+      );
     } catch (e) {
       throw new HttpException(
         {
@@ -105,28 +111,28 @@ export class TasksController {
     }
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @UseFilters(HttpExceptionFilter)
   @Put('/update/:id')
-  update(
-    @Param('id', ParseIntPipe) id: UpdateTaskParams,
+  async update(
+    @Param() params: UpdateTaskParams,
     @Body() updateTaskDto: UpdateTaskDto,
   ) {
-    return this.tasksService.update(+id, updateTaskDto);
+    return this.tasksService.update(+params.id, updateTaskDto);
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @UseFilters(HttpExceptionFilter)
-  @Put('/update2/:id')
-  update2(
-    @Param('id', ParseIntPipe) id: UpdateTaskParams,
-    @Body() updateTaskDto: UpdateTaskDto,
-  ) {
-    return this.tasksService.update2(+id, updateTaskDto);
-  }
-
   @Delete('/delete/:id')
-  remove(@Param() params: DeleteTaskParams) {
-    return this.tasksService.remove(+params.id);
+  async remove(@Param() params: DeleteTaskParams) {
+    try {
+      return await this.tasksService.remove(+params.id);
+    } catch (e) {
+      throw new HttpException(
+        {
+          error: this.errorHandler.errorMessage.idNotFound,
+          message: e,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

@@ -138,85 +138,6 @@ export class TasksService {
   async update(id: number, updateTaskDto: UpdateTaskDto) {
     try {
       const updateManyObjectives = updateTaskDto.Objective_List;
-      const updatedObjectives = [];
-      Object.keys(updateManyObjectives).forEach(async function (key, i) {
-        const updatedObjective = await this.objectiveService
-          .updateByTaskId(id, updateManyObjectives[key])
-          .then((v) => {
-            console.log(
-              `updateManyObjectives[${i}] = `,
-              updateManyObjectives[key],
-            );
-            // updatedObjectives.push(v);
-          })
-          .catch((e) => {
-            console.error(e);
-          });
-        console.log(`updatedObjective = `, updatedObjective);
-      }, this);
-      await this.checkIfTaskFinished(id).then((value) => {
-        console.log(`value ${value}`);
-
-        const updateObj: any = {
-          where: {
-            id: id,
-          },
-          data: {
-            title: updateTaskDto.Title,
-            actionTime: updateTaskDto.Action_Time
-              ? new Date(updateTaskDto.Action_Time)
-              : updateTaskDto.Action_Time,
-            isFinished: value,
-            updatedTime: new Date(),
-          },
-        };
-        this.prisma.task
-          .update(updateObj)
-          .then((value) => {
-            return {
-              message: 'Success',
-            };
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  async checkIfTaskFinished(id: number): Promise<boolean> {
-    try {
-      let allObjectiveFinished = true;
-      const manyObjectivesFromTask: Objective[] =
-        await this.objectiveService.findMany(id);
-      console.log(manyObjectivesFromTask);
-
-      Object.keys(manyObjectivesFromTask).forEach(async function (key, i) {
-        console.log(
-          `IsFinished Obj index [${i}] = ${
-            manyObjectivesFromTask[key].isFinished
-          }, type ${typeof manyObjectivesFromTask[key].isFinished}`,
-        );
-
-        if (manyObjectivesFromTask[key].isFinished === false) {
-          allObjectiveFinished = false;
-        }
-        console.log(`allObjectiveFinished = ${allObjectiveFinished}`);
-      }, allObjectiveFinished);
-
-      console.log(`outer allObjectiveFinished = ${allObjectiveFinished}`);
-
-      return allObjectiveFinished;
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  async update2(id: number, updateTaskDto: UpdateTaskDto) {
-    try {
-      const updateManyObjectives = updateTaskDto.Objective_List;
       let taskPromise;
       // console.log(updateManyObjectives); //Payload Objective_List[]
       if (updateManyObjectives) {
@@ -304,7 +225,9 @@ export class TasksService {
             message: 'Success',
           };
         });
-    } catch (error) {}
-    return `This action removes a #${id} task`;
+    } catch (e) {
+      console.log(e);
+      return Promise.reject(e);
+    }
   }
 }

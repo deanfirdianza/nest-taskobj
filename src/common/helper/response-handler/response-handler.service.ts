@@ -50,4 +50,13 @@ export class ResponseHandlerService {
         }`,
     );
   }
+
+  successSingle(data: any) {
+    return JSON.parse(
+      `{
+            "message": "Success",
+            "data": ${data}
+        }`,
+    );
+  }
 }
