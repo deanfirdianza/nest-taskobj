@@ -20,7 +20,7 @@ export class TasksService {
         .create({
           data: {
             title: createTaskDto.Title,
-            actionTime: new Date(createTaskDto.Action_Time),
+            actionTime: new Date(createTaskDto.Action_Time * 1000),
             createdTime: new Date(),
             updatedTime: new Date(),
             ownerId: 2,
@@ -183,7 +183,7 @@ export class TasksService {
         data: {
           title: updateTaskDto.Title,
           actionTime: updateTaskDto.Action_Time
-            ? new Date(updateTaskDto.Action_Time)
+            ? new Date(updateTaskDto.Action_Time * 1000)
             : updateTaskDto.Action_Time,
           isFinished: taskPromise,
           updatedTime: new Date(),
