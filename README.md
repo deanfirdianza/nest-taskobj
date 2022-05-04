@@ -31,6 +31,20 @@
 ```bash
 $ npm install
 ```
+## Setup the database
+set your .ENV file into this
+(ref : https://docs.nestjs.com/recipes/prisma)
+
+```
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=SCHEMA"
+HASH_SALT=6
+```
+
+run this script to migrate the schema into db and also seed the db
+(ref : https://www.prisma.io/docs/guides/database/seed-database)
+```
+npx prisma migrate dev 
+```
 
 ## Running the app
 
@@ -41,33 +55,18 @@ $ npm run start
 # watch mode
 $ npm run start:dev
 
-# production mode
-$ npm run start:prod
+# hit api from postman collection below
 ```
 
-## Test
 
-```bash
-# unit tests
-$ npm run test
+## Reference
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
 - Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
+- Prisma - [https://www.prisma.io/docs/](https://www.prisma.io/docs/)
+- Class-Validator Package - [https://github.com/typestack/class-validator](https://github.com/typestack/class-validator)
+- Class-transformer package - [https://github.com/typestack/class-transformer](https://github.com/typestack/class-transformer)
+- rundef package [https://github.com/d4nyll/rundef](https://github.com/d4nyll/rundef)
+- Postman Collection [https://www.getpostman.com/collections/ee80b36589360cf38352](https://www.getpostman.com/collections/ee80b36589360cf38352)
 ## License
 
 Nest is [MIT licensed](LICENSE).
