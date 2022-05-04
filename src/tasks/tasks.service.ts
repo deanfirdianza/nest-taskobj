@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Objective, Task } from '@prisma/client';
-import { ErrorHandlerService } from '../common/helper/error-handler/error-handler.service';
 import { PrismaService } from '../prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { FindAllTaskQuery } from './dto/find-all-task-query.dto';
@@ -13,7 +12,6 @@ import { CreateObjectiveDto } from '../objectives/dto/create-objective.dto';
 export class TasksService {
   constructor(
     private prisma: PrismaService,
-    private errorHandler: ErrorHandlerService,
     private objectiveService: ObjectivesService,
   ) {}
   async create(createTaskDto: CreateTaskDto) {

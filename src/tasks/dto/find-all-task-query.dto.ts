@@ -39,7 +39,6 @@ export class FindAllTaskQuery {
 
   @IsOptional()
   @IsBoolean()
-  @Type(() => Boolean)
   @Transform(({ value }) => value === 'true')
   Is_Finished: boolean;
 }

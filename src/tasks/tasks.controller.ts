@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   ClassSerializerInterceptor,
@@ -20,7 +19,6 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskEntity } from './entities/task.entity';
-import { ErrorHandlerService } from '../common/helper/error-handler/error-handler.service';
 import { ResponseHandlerService } from '../common/helper/response-handler/response-handler.service';
 import { instanceToPlain } from 'class-transformer';
 import { FindAllTaskQuery } from './dto/find-all-task-query.dto';
@@ -35,7 +33,6 @@ import { DeleteTaskParams } from './dto/delete-task-param.dto';
 export class TasksController {
   constructor(
     private readonly tasksService: TasksService,
-    private errorHandler: ErrorHandlerService,
     private responseHandler: ResponseHandlerService,
   ) {}
 
@@ -49,10 +46,10 @@ export class TasksController {
       console.log(e);
       throw new HttpException(
         {
-          error: this.errorHandler.errorMessage.idNotFound,
+          error: this.responseHandler.errorMessage.idNotFound,
           message: e,
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
       );
     }
   }
@@ -79,9 +76,14 @@ export class TasksController {
         count,
       );
     } catch (e) {
+      console.log(e);
       throw new HttpException(
-        this.errorHandler.response(),
-        HttpStatus.BAD_REQUEST,
+        this.responseHandler.error(
+          this.responseHandler.errorMessage.idNotFound,
+          this.responseHandler.errorKey.idNotFound,
+          e,
+        ),
+        HttpStatus.NOT_FOUND,
       );
     }
   }
@@ -103,10 +105,10 @@ export class TasksController {
     } catch (e) {
       throw new HttpException(
         {
-          error: this.errorHandler.errorMessage.idNotFound,
+          error: this.responseHandler.errorMessage.idNotFound,
           message: e,
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
       );
     }
   }
@@ -117,7 +119,17 @@ export class TasksController {
     @Param() params: UpdateTaskParams,
     @Body() updateTaskDto: UpdateTaskDto,
   ) {
-    return this.tasksService.update(+params.id, updateTaskDto);
+    try {
+      return await this.tasksService.update(+params.id, updateTaskDto);
+    } catch (e) {
+      throw new HttpException(
+        {
+          error: this.responseHandler.errorMessage.idNotFound,
+          message: e,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
   @UseFilters(HttpExceptionFilter)
@@ -128,10 +140,10 @@ export class TasksController {
     } catch (e) {
       throw new HttpException(
         {
-          error: this.errorHandler.errorMessage.idNotFound,
+          error: this.responseHandler.errorMessage.idNotFound,
           message: e,
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
       );
     }
   }

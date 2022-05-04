@@ -6,11 +6,11 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import * as moment from 'moment';
-import { ErrorHandlerService } from './common/helper/error-handler/error-handler.service';
+import { ResponseHandlerService } from './common/helper/response-handler/response-handler.service';
 
 @Injectable()
 export class UnixValidationPipe implements PipeTransform {
-  constructor(private errorHandler: ErrorHandlerService) {}
+  constructor(private responseHandler: ResponseHandlerService) {}
   transform(value: any, metadata: ArgumentMetadata) {
     const unixParam = (({
       Action_Time_Start,
@@ -29,7 +29,7 @@ export class UnixValidationPipe implements PipeTransform {
       if (!moment(unixParam[e], 'X', true).isValid()) {
         throw new HttpException(
           {
-            error: this.errorHandler.errorMessage.param,
+            error: this.responseHandler.errorMessage.param,
             message: `${e} is not a valid Unix timestamp`,
           },
           HttpStatus.BAD_REQUEST,

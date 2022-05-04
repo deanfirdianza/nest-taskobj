@@ -22,14 +22,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
 
     if (status == HttpStatus.BAD_REQUEST) {
-      response.json({
+      response.status(status).json({
         message: 'Failed',
         error_key: this.errorKey.param,
         error_message: exception.getResponse()['error'],
         error_data: exception.getResponse()['message'],
       });
-    } else if (status == HttpStatus.OK) {
-      response.json({
+    } else if (status == HttpStatus.NOT_FOUND) {
+      response.status(status).json({
         message: 'Failed',
         error_key: this.errorKey.idNotFound,
         error_message: exception.getResponse()['error'],
